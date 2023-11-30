@@ -40,3 +40,10 @@ bool Renderer::CreateWindow(const std::string& title, int width, int height)
 
 	return true;
 }
+
+void Renderer::PresentCanvas(const Canvas& canvas)
+{
+	SDL_RenderCopy(renderer, canvas.m_texture, nullptr, nullptr);
+
+	SDL_RenderPresent(renderer);
+}
