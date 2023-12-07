@@ -5,8 +5,8 @@ static struct ray_t
 {
 	ray_t() = default;
 	ray_t(const glm::vec3& origin, const glm::vec3& direction) :
-		m_origin{origin},
-		m_direction{direction}
+		m_origin{origin.x,origin.y, origin.z},
+		m_direction{direction.x, direction.y, direction.z}
 	{}
 
 	glm::vec3 GetPoint(float distance) const { return m_origin + (m_direction * distance); }

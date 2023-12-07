@@ -7,9 +7,9 @@ class Triangle : public Object
 public:
 	Triangle(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, std::shared_ptr<Material> material) :
 		Object{ material },
-		m_v1{ v1 },
-		m_v2{ v2 },
-		m_v3{ v3 }
+		m_v1{ v1.x,v1.y,v1.z },
+		m_v2{ v2.x,v2.y,v2.z },
+		m_v3{ v3.x,v3.y,v3.z }
 	{
 	}
 

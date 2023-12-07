@@ -1,9 +1,7 @@
 #include "Triangle.h"
-#include "Ray.h"
 #include "MathUtils.h"
 
-bool Triangle::Hit(const ray_t& ray, float minDistance, float maxDistance, raycastHit_t& raycastHit)
-{
+bool Triangle::Hit(const ray_t& ray, float minDistance, float maxDistance, raycastHit_t& raycastHit) {
     // set edges of the triangle
     glm::vec3 edge1 = m_v2 - m_v1;
     glm::vec3 edge2 = m_v3 - m_v1;
@@ -15,8 +13,7 @@ bool Triangle::Hit(const ray_t& ray, float minDistance, float maxDistance, rayca
 
     // if determinant is less than 0 then ray is hitting back of triangle
     // if determinant is 0 then ray is parallel to triangle surface
-    if (determinant < 0 || approximately(determinant, 0))
-    {
+    if (determinant < 0 || approximately(determinant, 0)) {
         return false;
     }
 
@@ -24,25 +21,22 @@ bool Triangle::Hit(const ray_t& ray, float minDistance, float maxDistance, rayca
 
     glm::vec3 tvec = ray.m_origin - m_v1;
     float u = dot(tvec, pvec) * invDet;
-    if (u < 0 || u > 1)
-    {
+    if (u < 0 || u > 1) {
         return false;
     }
 
     glm::vec3 qvec = cross(tvec, edge1);
     float v = dot(qvec, ray.m_direction) * invDet;
-    if (v < 0 || u + v > 1)
-    {
+    if (v < 0 || u + v > 1) {
         return false;
     }
 
     float t = dot(edge2, qvec) * invDet;
-    if (t >= minDistance && t <= maxDistance)
-    {
+    if (t >= minDistance && t <= maxDistance) {
         // set raycast hit
         raycastHit.distance = t;
         raycastHit.point = ray.GetPoint(t);
-        raycastHit.normal = normal;
+        raycastHit.normal = glm::normalize(normal);
         raycastHit.material = GetMaterial();
 
         return true;

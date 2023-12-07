@@ -5,7 +5,7 @@
 bool Lambertian::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& color, ray_t& scattered) const
 {
     glm::vec3 target = raycastHit.point + raycastHit.normal + randomInUnitSphere();
-    glm::vec3 direction = normalize(raycastHit.point * target);
+    glm::vec3 direction = glm::normalize(raycastHit.point * target);
 
     scattered = ray_t(raycastHit.point, direction);
     color = m_albedo;
@@ -15,7 +15,7 @@ bool Lambertian::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color
 
 bool Metal::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, glm::vec3& color, ray_t& scattered) const
 {
-	glm::vec3 reflected = reflect(normalize(ray.m_direction), raycastHit.normal);
+	glm::vec3 reflected = reflect(glm::normalize(ray.m_direction), raycastHit.normal);
 	// set scattered ray from reflected ray + random point in sphere (fuzz = 0 no randomness, fuzz = 1 random reflected)
 	// a mirror has a fuzz value of 0 and a diffused metal surface a higher value
 	scattered = ray_t{ raycastHit.point, reflected + (randomInUnitSphere() * m_fuzz) };
@@ -26,7 +26,7 @@ bool Metal::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, glm::vec3&
 
 bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, glm::vec3& color, ray_t& scattered) const
 {
-    glm::vec3 reflected = reflect(normalize(ray.m_direction), raycastHit.normal);
+    glm::vec3 reflected = reflect(glm::normalize(ray.m_direction), raycastHit.normal);
     glm::vec3 refracted;
 
     glm::vec3 outNormal;

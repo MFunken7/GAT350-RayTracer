@@ -10,8 +10,8 @@ public:
 	Plane() = default;
 	Plane(const glm::vec3& center, const glm::vec3& normal, std::shared_ptr<Material> material) :
 		Object(material),
-		m_center{center},
-		m_normal{normal}
+		m_center{center.x,center.y, center.z},
+		m_normal{normal.x,normal.y,normal.z}
 	{
 	}
 
