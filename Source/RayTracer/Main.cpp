@@ -4,17 +4,18 @@
 #include "Scene.h"
 #include "Material.h"
 #include "Sphere.h"
+#include "Mesh.h"
 #include <iostream>
 #include "Canvas.h"
 #include "Plane.h"
 #include "Triangle.h"
 
 inline void InitScene01(Scene& scene, const Canvas& canvas) {
-	float aspectRatio = canvas.GetSize().x / canvas.GetSize().y;
+
+	float aspectRatio = canvas.GetSize().x / (float)canvas.GetSize().y;
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(glm::vec3{ 0, 2, 10 }, glm::vec3{ 0, 1, 0 }, glm::vec3{ 0, 1, 0 }, 20.0f, aspectRatio);
 	scene.SetCamera(camera);
 
-	// create objects -> add to scene
 	for (int x = -10; x < 10; x++)
 	{
 		for (int z = -10; z < 10; z++)
@@ -37,16 +38,69 @@ inline void InitScene01(Scene& scene, const Canvas& canvas) {
 		}
 	}
 
-	auto plane = std::make_unique<Plane>(glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 }, std::make_shared<Lambertian>(color3_t{ 0.2f }));
+	auto triangle = std::make_unique<Triangle>(glm::vec3{ 1, 0, -2 }, glm::vec3{ 3, 0, -2 }, glm::vec3{ 2, 2, -2 }, std::make_shared<Lambertian>(color3_t{ 1, 0, 0 }));
+	scene.AddObject(std::move(triangle));
+	
+	auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{ 0, 0, 1 }));
+	mesh->Load("models/cube.obj", glm::vec3{ -1, 1, -1 }, glm::vec3{ 0, 45, 0 });
+	scene.AddObject(std::move(mesh));
+
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -1, 0 }, glm::vec3{ 0, 1, 0 }, std::make_shared<Lambertian>(color3_t{ 0.2f }));
 	scene.AddObject(std::move(plane));
 }
+
+inline void InitScene02(Scene& scene, const Canvas& canvas) {
+
+	{
+
+		float aspectRatio = canvas.GetSize().x / (float)canvas.GetSize().y;
+		std::shared_ptr<Camera> camera = std::make_shared<Camera>(glm::vec3{ 0, 1, 10 }, glm::vec3{ 0, 1, 0 }, glm::vec3{ 0, 1, 0 }, 20.0f, aspectRatio);
+		scene.SetCamera(camera);
+
+		auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{0.9f,0.9f,0.9f }));
+		mesh->Load("models/quad.obj", glm::vec3{ 0, 1, -3 }, glm::vec3{ 0,0, 0 }, glm::vec3{3});
+		scene.AddObject(std::move(mesh));
+	}
+	{
+		auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{0.9f,0.9f,0.9f }));
+		mesh->Load("models/quad.obj", glm::vec3{ 1.5f, 1, 1 }, glm::vec3{ 0,-90, 0 }, glm::vec3{ 8, 3, 3 });
+		scene.AddObject(std::move(mesh));
+	}
+	{
+		auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{0.9f,0.9f,0.9f }));
+		mesh->Load("models/quad.obj", glm::vec3{ -1.5f, 1, 1}, glm::vec3{ 0,90, 0 }, glm::vec3{ 8, 3, 3 });
+		scene.AddObject(std::move(mesh));
+	}
+	{
+		auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{0.9f,0.9f,0.9f }));
+		mesh->Load("models/quad.obj", glm::vec3{ 0, 2.5f,0 }, glm::vec3{90,0, 0 }, glm::vec3{ 3, 8, 8 });
+		scene.AddObject(std::move(mesh));
+	}
+	{
+		auto mesh = std::make_unique<Mesh>(std::make_shared<Emissive>(color3_t{ 1, 1, 1 }, 1.5f));
+		mesh->Load("models/quad.obj", glm::vec3{ 0, 2.4f,0 }, glm::vec3{ 90,0, 0 }, glm::vec3{ 2, 2, 2 });
+		scene.AddObject(std::move(mesh));
+	}
+
+	auto material = std::make_shared<Lambertian>(color3_t{ 1,0,0 });
+	auto sphere = std::make_unique<Sphere>(glm::vec3{-1,0,-1 }, 0.4f, material);
+	scene.AddObject(std::move(sphere));
+
+	auto mesh = std::make_unique<Mesh>(std::make_shared<Lambertian>(color3_t{ 0, 0, 1 }));
+	mesh->Load("models/cube.obj", glm::vec3{ 1, 0, 0 }, glm::vec3{ 0, 45, 0 });
+	scene.AddObject(std::move(mesh));
+
+	auto plane = std::make_unique<Plane>(glm::vec3{ 0, -1, 0 }, glm::vec3{ 0, 1, 0 }, std::make_shared<Lambertian>(color3_t{ 0.2f }));
+	scene.AddObject(std::move(plane));
+}
+
 
 int main(int argc, char* argv[]) {
 
 	const int width = 800;
 	const int height = 600;
-	const int samples = 20;
-	const int depth = 5;
+	const int samples = 200;
+	const int depth = 8;
 
 	std::cout << "Hello World\n";
 
@@ -55,11 +109,8 @@ int main(int argc, char* argv[]) {
 	renderer.CreateWindow("Ray Tracer", width, height);
 
 	Canvas canvas(width, height, renderer);
-
-	float aspectRatio = canvas.GetSize().x / (float)canvas.GetSize().y;
-	std::shared_ptr<Camera> camera = std::make_shared<Camera>(glm::vec3{ 0, 1, 10 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 1, 0 }, 20.0f, aspectRatio);
 	Scene scene(glm::vec3{ 1.0f }, glm::vec3{ 0.5f, 0.7f, 1.0f });
-	scene.SetCamera(camera);
+	
 
 	srand(time(NULL));
 

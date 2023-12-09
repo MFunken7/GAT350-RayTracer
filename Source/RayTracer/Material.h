@@ -22,7 +22,7 @@ public:
 	bool Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& color, ray_t& scattered) const override;
 
 protected:
-	color3_t m_albedo;
+	color3_t m_albedo{ 0 };
 };
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Material.h"
 #include <memory>
+#include <iostream>
 
 class Object
 {

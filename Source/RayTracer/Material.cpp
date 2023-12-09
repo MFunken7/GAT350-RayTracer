@@ -5,7 +5,7 @@
 bool Lambertian::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, color3_t& color, ray_t& scattered) const
 {
     glm::vec3 target = raycastHit.point + raycastHit.normal + randomInUnitSphere();
-    glm::vec3 direction = glm::normalize(raycastHit.point * target);
+    glm::vec3 direction = glm::normalize(target - raycastHit.point);
 
     scattered = ray_t(raycastHit.point, direction);
     color = m_albedo;
@@ -39,7 +39,7 @@ bool Dielectric::Scatter(const ray_t& ray, const raycastHit_t& raycastHit, glm::
     {
         outNormal = -raycastHit.normal;
         ni_over_nt = m_index;
-        cosine = m_index * dot(ray.m_direction, raycastHit.normal) / ray.m_direction.length();
+        cosine = m_index * glm::dot(ray.m_direction, raycastHit.normal) / ray.m_direction.length();
     }
     else
     {
